@@ -6,9 +6,7 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
-#######################
 wCam, hCam = 640, 480
-#######################
 
 cap = cv2.VideoCapture(0)
 cap.set(3, wCam)
@@ -24,8 +22,6 @@ interface = devices.Activate(
     IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
 volume = cast(interface, POINTER(IAudioEndpointVolume))
 
-# volume.GetMute()
-# volume.GetMasterVolumeLevel()
 volRange = volume.GetVolumeRange()
 minVol = volRange[0]
 maxVol = volRange[1]
@@ -62,7 +58,7 @@ while True:
             # Check finger up
             fingers = detector.fingersUp()
 
-            # If pinky is down set the volume
+            # If middle finger is down set the volume
             if not fingers[2]:
                 volume.SetMasterVolumeLevelScalar(volPer / 100, None)
                 cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, (0, 255, 0), cv2.FILLED)
