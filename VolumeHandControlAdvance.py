@@ -31,6 +31,36 @@ vol = 0
 area = 0
 colorVol = (255, 0, 0)
 
+blue = (255, 0, 0)
+green = (0, 255, 0)
+
+
+def set_color_vol(color=blue):
+    global colorVol
+    colorVol = color
+
+
+def set_volume():
+    volume.SetMasterVolumeLevelScalar(volPer / 100, None)
+    cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, green, cv2.FILLED)
+
+
+def do_all_drawing():
+    draw_volume_bar_percentage(img)
+    draw_current_volume(img)
+
+
+def draw_volume_bar_percentage(image):
+    cv2.rectangle(image, (50, 150), (85, 400), (0, 255, 0), 3)
+    cv2.rectangle(image, (50, int(volBar)), (85, 400), (0, 255, 0), cv2.FILLED)
+    cv2.putText(image, f'{int(volPer)}%', (40, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 3)
+
+
+def draw_current_volume(image):
+    cVol = int(volume.GetMasterVolumeLevelScalar() * 100)
+    cv2.putText(image, f'Vol set : {int(cVol)}', (400, 50), cv2.FONT_HERSHEY_COMPLEX, 1, colorVol, 3)
+
+
 while True:
     success, img = cap.read()
 
@@ -60,24 +90,12 @@ while True:
 
             # If middle finger is down set the volume
             if not fingers[2]:
-                volume.SetMasterVolumeLevelScalar(volPer / 100, None)
-                cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, (0, 255, 0), cv2.FILLED)
-                colorVol = (0, 255, 0)
+                set_volume()
+                set_color_vol(green)
             else:
-                colorVol = (255, 0, 0)
+                set_color_vol()
 
-    # Drawings
-    cv2.rectangle(img, (50, 150), (85, 400), (0, 255, 0), 3)
-    cv2.rectangle(img, (50, int(volBar)), (85, 400), (0, 255, 0), cv2.FILLED)
-    cv2.putText(img, f'{int(volPer)}%', (40, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 3)
-    cVol = int(volume.GetMasterVolumeLevelScalar() * 100)
-    cv2.putText(img, f'Vol set : {int(cVol)}', (400, 50), cv2.FONT_HERSHEY_COMPLEX, 1, colorVol, 3)
-
-    # Frame rate
-    cTime = time.time()
-    fps = 1 / (cTime - pTime)
-    pTime = cTime
-    cv2.putText(img, f'FPS: {int(fps)}', (20, 40), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 3)
+    do_all_drawing()
 
     cv2.imshow("Image", img)
     cv2.waitKey(1)
