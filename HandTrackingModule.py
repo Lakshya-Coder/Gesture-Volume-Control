@@ -2,7 +2,9 @@ import math
 
 import cv2
 import mediapipe as mp
-import time
+
+import Colors
+
 
 class HandDetector():
     def __init__(self, mode=False, maxHands=2, detectionCon=0.5, trackCon=0.5):
@@ -59,7 +61,7 @@ class HandDetector():
             bbox = xmin, ymin, xmax, ymax
 
             if draw:
-                cv2.rectangle(img, (bbox[0] - 20, bbox[1] - 20), (bbox[2] + 20, bbox[3] + 20), (0, 255, 0), 2)
+                cv2.rectangle(img, (bbox[0] - 20, bbox[1] - 20), (bbox[2] + 20, bbox[3] + 20), Colors.green, 2)
 
         return self.lmList, bbox
 
@@ -87,13 +89,12 @@ class HandDetector():
         cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
 
         if draw:
-            cv2.circle(img, (x1, y1), 15, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (x2, y2), 15, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
+            cv2.circle(img, (x1, y1), 15, Colors.purple, cv2.FILLED)
+            cv2.circle(img, (x2, y2), 15, Colors.purple, cv2.FILLED)
+            cv2.circle(img, (cx, cy), 15, Colors.purple, cv2.FILLED)
 
-            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
+            cv2.line(img, (x1, y1), (x2, y2), Colors.purple, 3)
 
         length = math.hypot((x2 - x1), (y2 - y1))
 
         return length, img, [x1, y1, x2, y2, cx, cy]
-

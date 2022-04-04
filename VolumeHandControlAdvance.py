@@ -1,6 +1,7 @@
 import cv2
-import time
 import numpy as np
+
+import Colors
 from HandTrackingModule import HandDetector
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
@@ -11,9 +12,6 @@ wCam, hCam = 640, 480
 cap = cv2.VideoCapture(0)
 cap.set(3, wCam)
 cap.set(4, hCam)
-
-pTime = 0
-cTime = 0
 
 detector = HandDetector(detectionCon=0.8, maxHands=1)
 
@@ -29,20 +27,20 @@ volPer = 0
 volBar = 400
 vol = 0
 area = 0
-colorVol = (255, 0, 0)
 
-blue = (255, 0, 0)
-green = (0, 255, 0)
+colorVol = Colors.blue
+
+smoothness = 5
 
 
-def set_color_vol(color=blue):
+def set_color_vol(color=Colors.blue):
     global colorVol
     colorVol = color
 
 
 def set_volume():
     volume.SetMasterVolumeLevelScalar(volPer / 100, None)
-    cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, green, cv2.FILLED)
+    cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, Colors.green, cv2.FILLED)
 
 
 def do_all_drawing():
@@ -51,9 +49,9 @@ def do_all_drawing():
 
 
 def draw_volume_bar_percentage(image):
-    cv2.rectangle(image, (50, 150), (85, 400), (0, 255, 0), 3)
-    cv2.rectangle(image, (50, int(volBar)), (85, 400), (0, 255, 0), cv2.FILLED)
-    cv2.putText(image, f'{int(volPer)}%', (40, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 3)
+    cv2.rectangle(image, (50, 150), (85, 400), Colors.green, 3)
+    cv2.rectangle(image, (50, int(volBar)), (85, 400), Colors.green, cv2.FILLED)
+    cv2.putText(image, f'{int(volPer)}%', (40, 450), cv2.FONT_HERSHEY_COMPLEX, 1, Colors.green, 3)
 
 
 def draw_current_volume(image):
@@ -82,7 +80,6 @@ while True:
             volPer = np.interp(length, [50, 200], [0, 100])
 
             # Reduce Resolution to make it smoother
-            smoothness = 5
             volPer = smoothness * round(volPer / smoothness)
 
             # Check finger up
@@ -91,7 +88,7 @@ while True:
             # If middle finger is down set the volume
             if not fingers[2]:
                 set_volume()
-                set_color_vol(green)
+                set_color_vol(Colors.green)
             else:
                 set_color_vol()
 
